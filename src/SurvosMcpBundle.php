@@ -3,6 +3,7 @@
 
 namespace Survos\McpBundle;
 
+use Survos\McpBundle\Command\DebugMcpCommand;
 use Survos\McpBundle\Service\McpClientService;
 use Symfony\Component\Config\Definition\Configurator\DefinitionConfigurator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -14,21 +15,18 @@ class SurvosMcpBundle extends AbstractBundle
 {
     public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
     {
-        $builder->register(McpClientService::class)
-            ->setAutowired(true);
-        // $builder->setParameter('survos_workflow.direction', $config['direction']);
+        $builder->autowire(McpClientService::class)
+            ->setAutowired(true)
+            ->setAutoconfigured(true)
+            ->setPublic(true)
+            ->setArgument('$clients', $config['clients'])
+        ;
 
-        // twig classes
-
-/*
-$definition = $builder
-->autowire('survos.barcode_twig', BarcodeTwigExtension::class)
-->addTag('twig.extension');
-
-$definition->setArgument('$widthFactor', $config['widthFactor']);
-$definition->setArgument('$height', $config['height']);
-$definition->setArgument('$foregroundColor', $config['foregroundColor']);
-*/
+        foreach ([DebugMcpCommand::class] as $class) {
+            $builder->autowire($class)
+                ->setAutoconfigured(true)
+                ->addTag('console.command');
+        }
 
     }
 public function configure(DefinitionConfigurator $definition): void
