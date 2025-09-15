@@ -15,7 +15,9 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 final class DebugMcpCommand
 {
     const JSON_FLAGS = JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE;
-    public function __construct(private readonly McpClientService $mcp) {}
+    public function __construct(
+        private readonly McpClientService $mcp
+    ) {}
 
     public function __invoke(
         SymfonyStyle $io,
